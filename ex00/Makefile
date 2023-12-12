@@ -6,12 +6,12 @@
 #    By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/11 18:33:10 by eguelin           #+#    #+#              #
-#    Updated: 2023/12/11 19:02:23 by eguelin          ###   ########lyon.fr    #
+#    Updated: 2023/12/12 19:55:56 by eguelin          ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
 .PHONY: all clean fclean re
-.SILENT:
+# .SILENT:
 
 # **************************************************************************** #
 #                                   Variable                                   #
@@ -58,7 +58,9 @@ FULL_CLEAN_MSG	= "$(PURPLE)Full cleaning $(NAME) $(DEFAULT)done on $(YELLOW)$(sh
 ALL_FILES	= $(addprefix $(CLS_DIR), $(CLS_FILES))
 
 SRC_FILES	= main.cpp \
-			  utils.cpp
+			  dateToInt.cpp \
+			  getData.cpp \
+			  trim.cpp
 
 ALL_FILES	+= $(addprefix $(SRC_DIR), $(SRC_FILES))
 
