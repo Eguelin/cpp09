@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:43:45 by eguelin           #+#    #+#             */
-/*   Updated: 2023/12/12 19:43:16 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 18:37:17 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,16 @@
 
 # include <iostream>
 # include <fstream>
-# include <sstream>
 # include <cstdlib>
 # include <map>
 
+/* ************************************************************************** */
+/*                                   utils                                    */
+/* ************************************************************************** */
+
 void	trim( std::string &str );
 int		dateToInt( const std::string &date );
-std::map<int, double>	getData( const std::string &filename );
+int		getData( std::map<int, double> &data, const std::string &filename );
+int		exeInput( const std::map<int, double> &data, const std::string &filename );
 
 #endif

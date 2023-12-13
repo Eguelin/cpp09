@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2023/12/12 19:27:43 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 15:06:46 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,21 @@
 
 int main( int argc, char **argv )
 {
-	static_cast<void>(argc);
-	static_cast<void>(argv);
+	std::map<int, double>	data;
 
-	std::map<int, double>	data = getData("./data.csv");
+	if (argc < 2)
+	{
+		std::cerr << "Error: could not open file." << std::endl;
 
-	std::cout << "data.size() = " << data.size() << std::endl;
-	std::cout << data.begin()->first << " -> " << data.begin()->second << std::endl;
-	std::cout << data.rbegin()->first << " -> " << data.rbegin()->second << std::endl;
+		return (1);
+	}
+
+	if (getData(data, "./data.csv"))
+		return (1);
+
+	for (int i = 1; i < argc; i++)
+		if (exeInput(data, argv[i]))
+			return (1);
 
 	return (0);
 }

@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*    getData.cpp                                       :+:      :+:    :+:   */
+/*   getData.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 19:39:08 by eguelin           #+#    #+#             */
-/*   Updated: 2023/12/12 19:48:21 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2023/12/13 15:21:26 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "btc.hpp"
 
-static bool	addLineToData( const std::string &line, std::map<int, double> &data );
+static bool	addLineToData( std::map<int, double> &data, const std::string &line );
 
-std::map<int, double>	getData( const std::string &filename )
+int	getData( std::map<int, double> &data, const std::string &filename )
 {
 	std::ifstream			file;
 	std::string				line;
-	std::map<int, double>	data;
 
 	file.open(filename.c_str());
 	if (!file.is_open())
 	{
 		std::cerr << "Error: could not open file " << filename << std::endl;
 
-		return (data);
+		return (1);
 	}
 
 	while (std::getline(file, line))
@@ -35,21 +34,21 @@ std::map<int, double>	getData( const std::string &filename )
 		if (line.empty() || line == "date,exchange_rate")
 			continue;
 
-		if (!addLineToData(line, data))
+		if (!addLineToData(data, line))
 		{
 			std::cerr << "Error: invalid line format: " << line << std::endl;
-			data.clear();
+			file.close();
 
-			break;
+			return (1);
 		}
 	}
 
 	file.close();
 
-	return (data);
+	return (0);
 }
 
-static bool	addLineToData( const std::string &line, std::map<int, double> &data )
+static bool	addLineToData( std::map<int, double> &data, const std::string &line )
 {
 	int		date;
 	double	price;
