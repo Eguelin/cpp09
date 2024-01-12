@@ -6,29 +6,45 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2023/12/13 15:06:46 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/12 19:38:22 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "btc.hpp"
+#include "BitcoinExchange.hpp"
 
 int main( int argc, char **argv )
 {
-	std::map<int, double>	data;
+	const char	*dataFile = "data.csv";
 
-	if (argc < 2)
+	(void)argv;
+	if (argc != 2)
 	{
-		std::cerr << "Error: could not open file." << std::endl;
+		std::cerr << "Error: wrong number of arguments" << std::endl;
 
 		return (1);
 	}
 
-	if (getData(data, "./data.csv"))
-		return (1);
+	try
+	{
+		BitcoinExchange	BtcEx(dataFile);
 
-	for (int i = 1; i < argc; i++)
-		if (exeInput(data, argv[i]))
+		try
+		{
+			BtcEx.exchangeInputFile(argv[1]);
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << argv[1] << std::endl;
+
 			return (1);
+		}
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << dataFile << std::endl;
+
+		return (1);
+	}
 
 	return (0);
 }
