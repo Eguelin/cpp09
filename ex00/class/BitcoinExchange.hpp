@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:02:08 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/12 19:35:59 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/14 15:45:47 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,17 @@
 # include <fstream>
 # include <cstdlib>
 # include <map>
+# include <algorithm>
 
 class BitcoinExchange
 {
 	public:
 
-		BitcoinExchange( void );
-		BitcoinExchange( const char *dataFile );
-		BitcoinExchange( const BitcoinExchange &src );
-		~BitcoinExchange( void );
 
-		BitcoinExchange	&operator=( const BitcoinExchange &src );
-
-		void	setData( const char *dataFile );
-		void	addDateToData( const std::string &line );
-		double	getPrice( std::string date ) const;
-		void 	exchangeRequest( std::string &line ) const;
-		void 	exchangeInputFile( const char *filename ) const;
+		static void		addData( const char *dataFile );
+		static void		addDateToData( const std::string &line );
+		static void		exchangeInputFile( const char *filename );
+		static void		exchangeRequest( const std::string &line );
 
 		class FileException: public std::exception
 		{
@@ -67,7 +61,15 @@ class BitcoinExchange
 
 	private:
 
-		std::map<std::string, double>	_data;
+		static std::map<int, double>	_data;
+
+		BitcoinExchange( void );
+		BitcoinExchange( const BitcoinExchange &src );
+		~BitcoinExchange( void );
+
+		BitcoinExchange	&operator=( const BitcoinExchange &src );
+
+		static double	getPrice( int date );
 };
 
 #endif

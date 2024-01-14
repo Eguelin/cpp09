@@ -6,57 +6,22 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:02:07 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/12 19:37:08 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/14 15:46:08 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
-static void	trim( std::string &str );
-static bool	isValidDate( std::string &date );
-static int	convertDate( const char **str, char sep, int size );
+static int	convertDate( const std::string &date );
+static int	convertDatePart( const char **str, char sep, int size );
 static bool	isValidDate( int year, int month, int day );
 static bool	isLeapYear( int year );
 
 /* ************************************************************************** */
-/*                         Constructors & Destructors                         */
+/*                           Public static functions                          */
 /* ************************************************************************** */
 
-BitcoinExchange::BitcoinExchange( void )
-{
-}
-
-BitcoinExchange::BitcoinExchange( const char *dataFile )
-{
-	this->setData(dataFile);
-}
-
-BitcoinExchange::BitcoinExchange( const BitcoinExchange &src )
-{
-	*this = src;
-}
-
-BitcoinExchange::~BitcoinExchange( void )
-{
-}
-
-/* ************************************************************************** */
-/*                              Operator overload                             */
-/* ************************************************************************** */
-
-BitcoinExchange	&BitcoinExchange::operator=( const BitcoinExchange &src )
-{
-	if (this != &src)
-		this->_data = src._data;
-
-	return (*this);
-}
-
-/* ************************************************************************** */
-/*                           Public member functions                          */
-/* ************************************************************************** */
-
-void	BitcoinExchange::setData( const char *dataFile )
+void	BitcoinExchange::addData( const char *dataFile )
 {
 	std::string		line;
 	std::ifstream	file;
@@ -72,7 +37,7 @@ void	BitcoinExchange::setData( const char *dataFile )
 
 		try
 		{
-			this->addDateToData(line);
+			BitcoinExchange::addDateToData(line);
 		}
 		catch(const std::exception& e)
 		{
@@ -85,7 +50,7 @@ void	BitcoinExchange::setData( const char *dataFile )
 
 void	BitcoinExchange::addDateToData( const std::string &line )
 {
-	std::string	date;
+	int		date;
 	double	price;
 	size_t	pos;
 	char	*endptr;
@@ -94,83 +59,21 @@ void	BitcoinExchange::addDateToData( const std::string &line )
 	if (pos == std::string::npos || pos == 0 || pos == line.size() - 1)
 		throw InvalidDataException();
 
-	date = line.substr(0, pos);
-
-	if (!isValidDate(date))
+	date = convertDate(line.substr(0, pos));
+	if (date == -1)
 		throw InvalidDataException();
 
 	price = std::strtod(line.substr(pos + 1).c_str(), &endptr);
 	if (*endptr != '\0')
 		throw InvalidDataException();
 
-	if (this->_data.find(date) != this->_data.end())
+	if (BitcoinExchange::_data.find(date) != BitcoinExchange::_data.end())
 		throw DateAlreadyExistsException();
 
-	this->_data[date] = price;
+	BitcoinExchange::_data[date] = price;
 }
 
-double	BitcoinExchange::getPrice( std::string date ) const
-{
-	std::map<std::string, double>::const_iterator	it;
-	std::map<std::string, double>::const_iterator	lower_bound;
-	std::map<std::string, double>::const_iterator	upper_bound;
-
-	if (!isValidDate(date))
-		throw InvalidDateException();
-
-	it = this->_data.find(date);
-	if (it != this->_data.end())
-		return (it->second);
-
-	if (date < this->_data.begin()->first)
-		return (this->_data.begin()->second);
-	else if (date > this->_data.rbegin()->first)
-		return (this->_data.rbegin()->second);
-
-	lower_bound = this->_data.upper_bound(date);
-	upper_bound = lower_bound--;
-
-	if (upper_bound->first.compare(date) < -lower_bound->first.compare(date))
-		return (upper_bound->second);
-
-	return (lower_bound->second);
-}
-
-void	BitcoinExchange::exchangeRequest( std::string &line )	const
-{
-	std::string	date;
-	double		nb;
-	size_t		pos;
-	char		*endptr;
-
-	pos = line.find("|");
-	if (pos == std::string::npos || pos == 0 || pos == line.size() - 1)
-	{
-		std::cout << "Error: bad input => " << line << std::endl;
-
-		return;
-	}
-
-	date = line.substr(0, pos);
-	if (!isValidDate(date))
-	{
-		std::cout << "Error: bad input => " << line << std::endl;
-
-		return;
-	}
-
-	nb = std::strtod(line.substr(pos + 1).c_str(), &endptr);
-	if (*endptr != '\0')
-		std::cout << "Error: bad input => " << line << std::endl;
-	else if (nb < 0)
-		std::cout << "Error: not a positive number." << std::endl;
-	else if (nb > 1000)
-		std::cout << "Error: too large a number." << std::endl;
-	else
-		std::cout << date << " => " << nb << " = " << (nb * getPrice(date)) << std::endl;
-}
-
-void	BitcoinExchange::exchangeInputFile( const char *filename ) const
+void	BitcoinExchange::exchangeInputFile( const char *filename )
 {
 	std::ifstream			file;
 	std::string				line;
@@ -181,15 +84,57 @@ void	BitcoinExchange::exchangeInputFile( const char *filename ) const
 
 	while (std::getline(file, line))
 	{
-		trim(line);
-
-		if (line.empty() || line == "date|value")
+		if (line.empty() || line == "date | value")
 			continue;
 
 		exchangeRequest(line);
 	}
 
 	file.close();
+}
+
+void	BitcoinExchange::exchangeRequest( const std::string &line )
+{
+	int			date;
+	std::string	dateStr;
+	double		nb;
+	size_t		pos;
+	char		*endptr;
+
+	pos = line.find(" | ");
+	if (pos == std::string::npos)
+	{
+		std::cout << "Error: bad input => " << line << std::endl;
+
+		return;
+	}
+
+	dateStr = line.substr(0, pos);
+	date = convertDate(dateStr);
+	if (date == -1)
+	{
+		std::cout << "Error: bad input => " << line << std::endl;
+
+		return;
+	}
+
+	pos = pos + 3;
+	if (!isdigit(line[pos]))
+	{
+		std::cout << "Error: bad input => " << line << std::endl;
+
+		return;
+	}
+
+	nb = std::strtod(line.substr(pos).c_str(), &endptr);
+	if (*endptr != '\0')
+		std::cout << "Error: bad input => " << line << std::endl;
+	else if (nb < 0)
+		std::cout << "Error: not a positive number." << std::endl;
+	else if (nb > 1000)
+		std::cout << "Error: too large a number." << std::endl;
+	else
+		std::cout << dateStr << " => " << nb << " = " << (nb * getPrice(date)) << std::endl;
 }
 
 /* ************************************************************************** */
@@ -216,32 +161,74 @@ const char	*BitcoinExchange::InvalidDatabaseException::what( void ) const throw(
 	return ("Error: invalid database: ");
 }
 
-const char	*BitcoinExchange::InvalidDateException::what( void ) const throw()
+/* ************************************************************************** */
+/*                      Private constructor & destructor                      */
+/* ************************************************************************** */
+
+BitcoinExchange::BitcoinExchange( void )
 {
-	return ("Error: invalid date: ");
 }
+
+BitcoinExchange::BitcoinExchange( const BitcoinExchange &src )
+{
+	*this = src;
+}
+
+BitcoinExchange::~BitcoinExchange( void )
+{
+}
+
+/* ************************************************************************** */
+/*                         Private operator overload                          */
+/* ************************************************************************** */
+
+BitcoinExchange	&BitcoinExchange::operator=( const BitcoinExchange &src )
+{
+	if (this != &src)
+		BitcoinExchange::_data = src._data;
+
+	return (*this);
+}
+
+/* ************************************************************************** */
+/*                          Private static functions                          */
+/* ************************************************************************** */
+
+double	BitcoinExchange::getPrice( int date )
+{
+	std::map<int, double>::const_iterator	it;
+	std::map<int, double>::const_iterator	lower_bound;
+	std::map<int, double>::const_iterator	upper_bound;
+
+	it = BitcoinExchange::_data.find(date);
+	if (it != BitcoinExchange::_data.end())
+		return (it->second);
+
+	if (date < BitcoinExchange::_data.begin()->first)
+		return (BitcoinExchange::_data.begin()->second);
+	else if (date > BitcoinExchange::_data.rbegin()->first)
+		return (BitcoinExchange::_data.rbegin()->second);
+
+	lower_bound = BitcoinExchange::_data.upper_bound(date);
+	upper_bound = lower_bound--;
+
+	if (upper_bound->first - date < date - lower_bound->first)
+		return (upper_bound->second);
+
+	return (lower_bound->second);
+}
+
+/* ************************************************************************** */
+/*                      Static attributes initialization                      */
+/* ************************************************************************** */
+
+std::map<int, double>	BitcoinExchange::_data;
 
 /* ************************************************************************** */
 /*                             Non-member functions                           */
 /* ************************************************************************** */
 
-static void	trim( std::string &str )
-{
-	if (str.empty())
-		return;
-
-	size_t firstIsSpace = str.find_first_of("\t\n\v\f\r ");
-	size_t firstNoSpace = str.find_first_not_of("\t\n\v\f\r ", firstIsSpace);
-
-	while (firstIsSpace != std::string::npos)
-	{
-		str.erase(firstIsSpace, firstNoSpace - firstIsSpace);
-		firstIsSpace = str.find_first_of("\t\n\v\f\r ");
-		firstNoSpace = str.find_first_not_of("\t\n\v\f\r ", firstIsSpace);
-	}
-}
-
-static bool	isValidDate( std::string &date )
+static int	convertDate( const std::string &date )
 {
 	int			year;
 	int			month;
@@ -249,19 +236,19 @@ static bool	isValidDate( std::string &date )
 	const char	*ptr = date.c_str();
 
 	if (date.size() != 10)
-		return (false);
+		return (-1);
 
-	year = convertDate(&ptr, '-', 4);
-	month = convertDate(&ptr, '-', 2);
-	day = convertDate(&ptr, '\0', 2);
+	year = convertDatePart(&ptr, '-', 4);
+	month = convertDatePart(&ptr, '-', 2);
+	day = convertDatePart(&ptr, '\0', 2);
 
 	if (!isValidDate(year, month, day))
 		return (false);
 
-	return (true);
+	return (year * 10000 + month * 100 + day);
 }
 
-static int	convertDate( const char **str, char sep, int size )
+static int	convertDatePart( const char **str, char sep, int size )
 {
 	int		nb;
 	char	*endptr;

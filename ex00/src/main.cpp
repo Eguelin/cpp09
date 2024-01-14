@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/12 19:38:22 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/14 15:33:55 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,22 @@ int main( int argc, char **argv )
 
 	try
 	{
-		BitcoinExchange	BtcEx(dataFile);
-
-		try
-		{
-			BtcEx.exchangeInputFile(argv[1]);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << argv[1] << std::endl;
-
-			return (1);
-		}
+		BitcoinExchange::addData(dataFile);
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << dataFile << std::endl;
+
+		return (1);
+	}
+
+	try
+	{
+		BitcoinExchange::exchangeInputFile(argv[1]);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << argv[1] << std::endl;
 
 		return (1);
 	}
