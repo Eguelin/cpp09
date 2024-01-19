@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 01:50:03 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/14 16:15:17 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/19 16:24:13 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ int		RPN::calculate( const std::string &str )
 	{
 		if (str[i] == ' ')
 			continue ;
+		else if (str[i] == '-' && isdigit(str[i + 1]) && (str[i + 2] == ' ' || str[i + 2] == '\0'))
+			RPN::_stack.push(-1 * (str[++i] - '0'));
 		else if (str[i + 1] != ' ' && str[i + 1] != '\0')
-			throw std::invalid_argument("Error");
+			throw std::invalid_argument("Error k");
 		else if (isOperator(str[i]))
 		{
 			try
@@ -40,8 +42,11 @@ int		RPN::calculate( const std::string &str )
 		else if (isdigit(str[i]))
 			RPN::_stack.push(str[i] - '0');
 		else
-			throw std::invalid_argument("Error");
+			throw std::invalid_argument("Error l");
 	}
+
+	if (RPN::_stack.size() != 1)
+		throw std::invalid_argument("Error m");
 
 	return (RPN::_stack.top());
 }

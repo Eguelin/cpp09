@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/14 16:13:52 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/15 16:22:27 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int main( int argc, char **argv )
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cout << e.what() << std::endl;
 
 		return (1);
 	}
