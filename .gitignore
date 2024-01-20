@@ -2,7 +2,8 @@
 *.o
 *.d
 *.pdf
+*.txt
 .obj
 btc
 RPN
-*.txt
+PmergeMe
