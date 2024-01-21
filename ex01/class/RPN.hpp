@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 01:50:03 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/13 08:03:02 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/21 20:06:17 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class RPN
 
 	private:
 
-		static std::stack<int>		_stack;
+		static std::stack<int>	_stack;
 
 		RPN( void );
 		RPN( const RPN &src );
