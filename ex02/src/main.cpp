@@ -6,11 +6,13 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/20 19:32:15 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/21 20:11:21 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
+#include <vector>
+#include <list>
 
 int main( int argc, const char **argv )
 {
@@ -18,7 +20,6 @@ int main( int argc, const char **argv )
 	std::list<int>		list;
 
 	(void)argc;
-
 	try
 	{
 		vect = PmergeMe::strTabToContainer< std::vector<int> >(argv + 1);
