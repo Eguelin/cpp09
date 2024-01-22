@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/22 14:33:29 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 17:43:53 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ class PmergeMe
 			_sortPair(pair);
 			_mergeSortPair(pair);
 			_insertFirst(container, pair, tmp);
-			// _insertSecond(container, pair);
+			_insertSecond(container, pair);
 		};
 
 
@@ -199,7 +199,29 @@ class PmergeMe
 			}
 		};
 
+		template < typename T, typename U >
+		static void	_insertSecond( U &container, T &pair )
+		{
+			size_t	sizeGoup = 0;
+			size_t	index = 0;
 
+			(void)container;
+
+			for (size_t i = 0; index < pair.size() - 1; i++)
+			{
+				sizeGoup = (1 << (i + 1)) - sizeGoup;
+				index += sizeGoup;
+
+				if (index > pair.size())
+				{
+					sizeGoup += pair.size() - 1 - index;
+					index = pair.size() - 1;
+				}
+
+				for (size_t j = 0; j < sizeGoup; j++)
+					std::cout << (index - j) << std::endl;
+			}
+		};
 };
 
 #endif
