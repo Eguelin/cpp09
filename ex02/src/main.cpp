@@ -6,37 +6,39 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/21 20:11:21 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 14:33:45 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 #include <vector>
-#include <list>
+#include <deque>
 
 int main( int argc, const char **argv )
 {
 	std::vector<int>	vect;
-	std::list<int>		list;
+	std::deque<int>		deque;
 
 	(void)argc;
 	try
 	{
 		vect = PmergeMe::strTabToContainer< std::vector<int> >(argv + 1);
-		list = PmergeMe::strTabToContainer< std::list<int> >(argv + 1);
+		deque = PmergeMe::strTabToContainer< std::deque<int> >(argv + 1);
 
-		std::cout << "Vector: ";
+		std::cout << "Size: " << vect.size() << std::endl;
+
+		std::cout << "Before:";
 		for (std::vector<int>::iterator it = vect.begin(); it != vect.end(); it++)
-			std::cout << *it << " ";
+			std::cout << " " << *it;
 		std::cout << std::endl;
 
-		std::cout << "List: ";
-		for (std::list<int>::iterator it = list.begin(); it != list.end(); it++)
-			std::cout << *it << " ";
-		std::cout << std::endl;
+		PmergeMe::sortContainer< std::vector<int>, std::vector<t_pair> >(vect);
+		PmergeMe::sortContainer< std::deque<int>, std::deque<t_pair> >(deque);
 
-		PmergeMe::sortContainer< std::vector<t_pair>, std::vector<int> >(vect);
-		PmergeMe::sortContainer< std::list<t_pair>, std::list<int> >(list);
+		std::cout << "After:";
+		for (std::vector<int>::iterator it = vect.begin(); it != vect.end(); it++)
+			std::cout << " " << *it;
+		std::cout << std::endl;
 	}
 	catch (const std::exception &e)
 	{

@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/21 19:59:07 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 14:33:29 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <cstdlib>
 # include <limits>
+# include <algorithm>
 
 typedef struct	s_pair
 {
@@ -27,10 +28,10 @@ class PmergeMe
 {
 	public:
 
-		template < typename Container >
-		static Container	strTabToContainer( const char **strTab )
+		template < typename T >
+		static T	strTabToContainer( const char **strTab )
 		{
-			Container	container;
+			T	container;
 			double		nb;
 			char		*endPtr;
 
@@ -51,11 +52,11 @@ class PmergeMe
 			return (container);
 		};
 
-		template < typename PairContainer, typename Container >
-		static void	sortContainer( Container &container )
+		template < typename T, typename U >
+		static void	sortContainer( T &container )
 		{
-			PairContainer	pair;
-			int				tmp = -1;
+			U	pair;
+			int	tmp = -1;
 
 			if (container.size() % 2 != 0)
 			{
@@ -63,24 +64,11 @@ class PmergeMe
 				container.pop_back();
 			}
 
-			pair = _pairingContainer< PairContainer, Container >(container);
-			_sortPairContainer(pair);
-			container.clear();
-			_mergeSortPairContainer(pair);
-
-			if (tmp != -1)
-			{
-				t_pair	pairTmp;
-
-				pairTmp.first = -1;
-				pairTmp.second = tmp;
-				pair.push_back(pairTmp);
-			}
-
-			std::cout << "Pair: ";
-			for (typename PairContainer::iterator it = pair.begin(); it != pair.end(); it++)
-				std::cout << "f:" << it->first << " " << "s:" << it->second << " | ";
-			std::cout << std::endl;
+			pair = _pairingContainer<T, U>(container);
+			_sortPair(pair);
+			_mergeSortPair(pair);
+			_insertFirst(container, pair, tmp);
+			// _insertSecond(container, pair);
 		};
 
 
@@ -106,28 +94,30 @@ class PmergeMe
 
 		PmergeMe	&operator=( const PmergeMe &src );
 
-		template < typename PairContainer, typename Container >
-		static PairContainer	_pairingContainer( Container &container )
+		template < typename T, typename U >
+		static U	_pairingContainer( T &container )
 		{
-			t_pair			pair;
-			PairContainer	pairContainer;
+			t_pair	pairTmp;
+			U		pair;
 
-			for (typename Container::iterator it = container.begin(); it != container.end(); it++)
+			for (typename T::iterator it = container.begin(); it != container.end(); it++)
 			{
-				pair.first = *(it++);
-				pair.second = *it;
-				pairContainer.push_back(pair);
+				pairTmp.first = *(it++);
+				pairTmp.second = *it;
+				pair.push_back(pairTmp);
 			}
 
-			return (pairContainer);
+			container.clear();
+
+			return (pair);
 		};
 
-		template < typename PairContainer >
-		static void	_sortPairContainer( PairContainer &pairContainer )
+		template < typename T >
+		static void	_sortPair( T &pair )
 		{
 			int	tmp;
 
-			for (typename PairContainer::iterator it = pairContainer.begin(); it != pairContainer.end(); it++)
+			for (typename T::iterator it = pair.begin(); it != pair.end(); it++)
 			{
 				if (it->first < it->second)
 				{
@@ -138,57 +128,77 @@ class PmergeMe
 			}
 		};
 
-		template < typename PairContainer >
-		static void	_mergeSortPairContainer( PairContainer &pairContainer )
+		template < typename T >
+		static void	_mergeSortPair( T &pair )
 		{
-			PairContainer						first;
-			PairContainer						second;
+			T	first;
+			T	second;
 
-			_splitContainer(pairContainer, first, second);
-			pairContainer.clear();
+			_splitPair(pair, first, second);
 
 			if (first.size() > 1)
-				_mergeSortPairContainer(first);
+				_mergeSortPair(first);
 			if (second.size() > 1)
-				_mergeSortPairContainer(second);
+				_mergeSortPair(second);
 
-			_mergePairContainer(pairContainer, first, second);
+			_mergePair(pair, first, second);
 		}
 
-		template < typename PairContainer >
-		static void	_mergePairContainer( PairContainer &pairContainer, PairContainer &first, PairContainer &second )
+		template < typename T >
+		static void	_mergePair( T &pair, T &first, T &second )
 		{
-			typename PairContainer::iterator	it_first = first.begin();
-			typename PairContainer::iterator	it_second = second.begin();
+			typename T::iterator	it_first = first.begin();
+			typename T::iterator	it_second = second.begin();
 
 			while (it_first != first.end() || it_second != second.end())
 			{
 				if (it_second == second.end() || (it_first != first.end() && it_first->first < it_second->first))
 				{
-					pairContainer.push_back(*it_first);
+					pair.push_back(*it_first);
 					it_first++;
 				}
 				else
 				{
-					pairContainer.push_back(*it_second);
+					pair.push_back(*it_second);
 					it_second++;
 				}
 			}
 		}
 
-		template < typename PairContainer >
-		static void	_splitContainer( PairContainer &pairContainer, PairContainer &first, PairContainer &second )
+		template < typename T >
+		static void	_splitPair( T &pair, T &first, T &second )
 		{
-			int		i = pairContainer.size() / 2;
+			int		i = pair.size() / 2;
 
-			for (typename PairContainer::iterator it = pairContainer.begin(); it != pairContainer.end(); it++)
+			for (typename T::iterator it = pair.begin(); it != pair.end(); it++)
 			{
 				if (i-- > 0)
 					first.push_back(*it);
 				else
 					second.push_back(*it);
 			}
+
+			pair.clear();
 		}
+
+		template < typename T, typename U >
+		static void	_insertFirst( U &container, T &pair, int tmp )
+		{
+			container.push_back(pair.front().second);
+
+			for (typename T::iterator it = pair.begin(); it != pair.end(); it++)
+				container.push_back(it->first);
+
+			if (tmp != -1)
+			{
+				t_pair	pairTmp;
+
+				pairTmp.first = -1;
+				pairTmp.second = tmp;
+				pair.push_back(pairTmp);
+			}
+		};
+
 
 };
 
