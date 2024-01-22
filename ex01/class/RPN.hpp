@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 01:50:03 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/21 20:06:17 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 11:34:38 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <iostream>
 # include <stack>
+# include <list>
 
 class RPN
 {
@@ -24,7 +25,7 @@ class RPN
 
 	private:
 
-		static std::stack<int>	_stack;
+		static std::stack< int, std::list<int> >	_stack;
 
 		RPN( void );
 		RPN( const RPN &src );

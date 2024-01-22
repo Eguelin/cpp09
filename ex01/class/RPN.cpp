@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 01:50:03 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/19 16:24:13 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 11:33:50 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,4 +130,4 @@ static bool	isOperator( char c )
 /*                      Static attributes initialization                      */
 /* ************************************************************************** */
 
-std::stack<int> RPN::_stack;
+std::stack< int, std::list<int> >	RPN::_stack;
