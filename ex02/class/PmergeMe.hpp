@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/22 17:43:53 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/22 20:01:06 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,14 +212,51 @@ class PmergeMe
 				sizeGoup = (1 << (i + 1)) - sizeGoup;
 				index += sizeGoup;
 
-				if (index > pair.size())
+				if (index > pair.size() - 1)
 				{
 					sizeGoup += pair.size() - 1 - index;
 					index = pair.size() - 1;
 				}
 
 				for (size_t j = 0; j < sizeGoup; j++)
-					std::cout << (index - j) << std::endl;
+					_dichotomicResearch(container, pair[index - j]);
+			}
+		};
+
+		template < typename T >
+		static void	_dichotomicResearch( T &container, const t_pair &pair )
+		{
+			typename T::iterator	it = container.begin();
+			typename T::iterator	it_end = find(container.begin(), container.end(), pair.first);
+			typename T::iterator	it_middle = it + (( it_end - it) / 2);
+
+			while (1)
+			{
+				if (*it_middle < pair.second)
+				{
+					it = it_middle + 1;
+					if (it == container.end() || *it > pair.second)
+					{
+						container.insert(it, pair.second);
+						break;
+					}
+				}
+				else
+				{
+					if (it_middle == container.begin())
+					{
+						container.insert(it_middle, pair.second);
+						break;
+					}
+
+					it_end = it_middle - 1;
+					if (*it_end < pair.second)
+					{
+						container.insert(it_end + 1, pair.second);
+						break;
+					}
+				}
+				it_middle = it + ((it_end - it) / 2);
 			}
 		};
 };
