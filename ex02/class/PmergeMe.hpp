@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/22 20:01:06 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/01/23 14:45:21 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,9 @@ class PmergeMe
 		{
 			U	pair;
 			int	tmp = -1;
+
+			if (container.size() <= 1)
+				return ;
 
 			if (container.size() % 2 != 0)
 			{
