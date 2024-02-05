@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/23 14:44:31 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/02/05 18:51:46 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,13 @@ int main( int argc, const char **argv )
 	clock_t				startTime;
 	clock_t				endTime;
 
-	(void)argc;
+	if (argc < 2)
+	{
+		std::cout << "Usage: " << argv[0] << " [int1] [int2] [int3] ..." << std::endl;
+
+		return (1);
+	}
+
 	try
 	{
 		vect = PmergeMe::strTabToContainer< std::vector<int> >(argv + 1);
@@ -44,7 +50,7 @@ int main( int argc, const char **argv )
 
 		std::cout << "Time to process a range of " << vect.size();
 		std::cout << " elements with std::vector : ";
-		std::cout << static_cast<double>(endTime - startTime) / 1000;
+		std::cout << static_cast<double>(endTime - startTime);
 		std::cout << "us" << std::endl;
 
 		startTime = clock();
@@ -53,12 +59,13 @@ int main( int argc, const char **argv )
 
 		std::cout << "Time to process a range of " << vect.size();
 		std::cout << " elements with std::deque : ";
-		std::cout << static_cast<double>(endTime - startTime) / 1000;
+		std::cout << static_cast<double>(endTime - startTime);
 		std::cout << "us" << std::endl;
 	}
 	catch (const std::exception &e)
 	{
 		std::cout << "Error: " << e.what() << std::endl;
+
 		return (1);
 	}
 

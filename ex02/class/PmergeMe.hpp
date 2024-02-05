@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/23 14:45:21 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/02/05 18:44:29 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,8 +208,6 @@ class PmergeMe
 			size_t	sizeGoup = 0;
 			size_t	index = 0;
 
-			(void)container;
-
 			for (size_t i = 0; index < pair.size() - 1; i++)
 			{
 				sizeGoup = (1 << (i + 1)) - sizeGoup;
@@ -231,36 +229,8 @@ class PmergeMe
 		{
 			typename T::iterator	it = container.begin();
 			typename T::iterator	it_end = find(container.begin(), container.end(), pair.first);
-			typename T::iterator	it_middle = it + (( it_end - it) / 2);
 
-			while (1)
-			{
-				if (*it_middle < pair.second)
-				{
-					it = it_middle + 1;
-					if (it == container.end() || *it > pair.second)
-					{
-						container.insert(it, pair.second);
-						break;
-					}
-				}
-				else
-				{
-					if (it_middle == container.begin())
-					{
-						container.insert(it_middle, pair.second);
-						break;
-					}
-
-					it_end = it_middle - 1;
-					if (*it_end < pair.second)
-					{
-						container.insert(it_end + 1, pair.second);
-						break;
-					}
-				}
-				it_middle = it + ((it_end - it) / 2);
-			}
+			container.insert(std::upper_bound(it, it_end, pair.second), pair.second);
 		};
 };
 
