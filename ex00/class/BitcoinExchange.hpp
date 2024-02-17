@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:02:08 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/14 15:45:47 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/02/17 20:02:43 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,53 +23,45 @@ class BitcoinExchange
 {
 	public:
 
+		BitcoinExchange( const char *dataFile );
+		~BitcoinExchange( void );
 
-		static void		addData( const char *dataFile );
-		static void		addDateToData( const std::string &line );
-		static void		exchangeInputFile( const char *filename );
-		static void		exchangeRequest( const std::string &line );
+		void	exchangeInputFile( const char *filename );
+		void	exchangeRequest( const std::string &line );
 
 		class FileException: public std::exception
 		{
 			public:
+				FileException( const std::string &msg );
+				~FileException( void ) throw();
 				virtual const char	*what( void ) const throw();
+			private:
+				std::string	_msg;
 		};
 
-		class InvalidDataException: public std::exception
+		class InvalidInputException: public std::exception
 		{
 			public:
+				InvalidInputException( const std::string &msg );
+				~InvalidInputException( void ) throw();
 				virtual const char	*what( void ) const throw();
-		};
-
-		class DateAlreadyExistsException: public std::exception
-		{
-			public:
-				virtual const char	*what( void ) const throw();
-		};
-
-		class InvalidDatabaseException: public std::exception
-		{
-			public:
-				virtual const char	*what( void ) const throw();
-		};
-
-		class InvalidDateException: public std::exception
-		{
-			public:
-				virtual const char	*what( void ) const throw();
+			private:
+				std::string	_msg;
 		};
 
 	private:
 
-		static std::map<int, double>	_data;
+		std::map<std::string, double>	_data;
 
 		BitcoinExchange( void );
 		BitcoinExchange( const BitcoinExchange &src );
-		~BitcoinExchange( void );
 
 		BitcoinExchange	&operator=( const BitcoinExchange &src );
 
-		static double	getPrice( int date );
+		void	_addDateToData( const std::string &line );
+		double	_getNumber( const std::string &str );
+		double	_getPrice( const std::string &date );
+		void	_getData( const std::string &line, const std::string &sep, std::string &date, double &nbr );
 };
 
 #endif
