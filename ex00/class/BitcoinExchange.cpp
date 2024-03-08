@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:02:07 by eguelin           #+#    #+#             */
-/*   Updated: 2024/02/17 20:24:26 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/02/17 20:29:09 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@ BitcoinExchange::BitcoinExchange( const char *dataFile )
 
 	file.open(dataFile);
 	if (!file.is_open())
-		throw FileException("cannot open file" + std::string(dataFile));
+		throw FileException("cannot open file: " + std::string(dataFile));
+	else if (file.peek() == EOF)
+		throw FileException("empty file: " + std::string(dataFile));
 
-	while (file.peek() != EOF && std::getline(file, line))
+	while (std::getline(file, line))
 	{
 		if (line.empty() || line == "date,exchange_rate")
 			continue;
@@ -57,8 +59,10 @@ void	BitcoinExchange::exchangeInputFile( const char *filename )
 	file.open(filename);
 	if (!file.is_open())
 		throw FileException("cannot open file" + std::string(filename));
+	else if (file.peek() == EOF)
+		throw FileException("empty file: " + std::string(filename));
 
-	while (file.peek() != EOF && std::getline(file, line))
+	while (std::getline(file, line))
 	{
 		if (line.empty() || line == "date | value")
 			continue;

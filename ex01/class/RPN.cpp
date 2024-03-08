@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 01:50:03 by eguelin           #+#    #+#             */
-/*   Updated: 2024/01/22 11:33:50 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/02/17 17:59:30 by eguelin          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,17 @@ int		RPN::calculate( const std::string &str )
 		else if (str[i] == '-' && isdigit(str[i + 1]) && (str[i + 2] == ' ' || str[i + 2] == '\0'))
 			RPN::_stack.push(-1 * (str[++i] - '0'));
 		else if (str[i + 1] != ' ' && str[i + 1] != '\0')
-			throw std::invalid_argument("Error k");
+			throw std::invalid_argument("Error");
 		else if (isOperator(str[i]))
-		{
-			try
-			{
-				RPN::_applyOperator(str[i]);
-			}
-			catch(const std::exception& e)
-			{
-				throw;
-			}
-		}
+			RPN::_applyOperator(str[i]);
 		else if (isdigit(str[i]))
 			RPN::_stack.push(str[i] - '0');
 		else
-			throw std::invalid_argument("Error l");
+			throw std::invalid_argument("Error");
 	}
 
 	if (RPN::_stack.size() != 1)
-		throw std::invalid_argument("Error m");
+		throw std::invalid_argument("Error");
 
 	return (RPN::_stack.top());
 }
