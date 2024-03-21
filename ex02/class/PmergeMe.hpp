@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/02/05 18:44:29 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/03/21 15:28:08 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,7 @@
 # include <cstdlib>
 # include <limits>
 # include <algorithm>
-
-typedef struct	s_pair
-{
-	int			first;
-	int			second;
-}				t_pair;
+# include <utility>
 
 class PmergeMe
 {
@@ -100,7 +95,7 @@ class PmergeMe
 		template < typename T, typename U >
 		static U	_pairingContainer( T &container )
 		{
-			t_pair	pairTmp;
+			std::pair<int, int>	pairTmp;
 			U		pair;
 
 			for (typename T::iterator it = container.begin(); it != container.end(); it++)
@@ -194,7 +189,7 @@ class PmergeMe
 
 			if (tmp != -1)
 			{
-				t_pair	pairTmp;
+				std::pair<int, int>	pairTmp;
 
 				pairTmp.first = -1;
 				pairTmp.second = tmp;
@@ -225,7 +220,7 @@ class PmergeMe
 		};
 
 		template < typename T >
-		static void	_dichotomicResearch( T &container, const t_pair &pair )
+		static void	_dichotomicResearch( T &container, const std::pair<int, int> &pair )
 		{
 			typename T::iterator	it = container.begin();
 			typename T::iterator	it_end = find(container.begin(), container.end(), pair.first);

@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/02/05 18:51:46 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/03/21 15:35:04 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int main( int argc, const char **argv )
 		std::cout << std::endl;
 
 		startTime = clock();
-		PmergeMe::sortContainer< std::vector<int>, std::vector<t_pair> >(vect);
+		PmergeMe::sortContainer< std::vector<int>, std::vector<std::pair<int, int> > >(vect);
 		endTime = clock();
 
 		std::cout << "After:";
@@ -54,7 +54,7 @@ int main( int argc, const char **argv )
 		std::cout << "us" << std::endl;
 
 		startTime = clock();
-		PmergeMe::sortContainer< std::deque<int>, std::deque<t_pair> >(deque);
+		PmergeMe::sortContainer< std::deque<int>, std::deque<std::pair<int, int> > >(deque);
 		endTime = clock();
 
 		std::cout << "Time to process a range of " << vect.size();
