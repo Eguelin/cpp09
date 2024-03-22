@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:38:38 by eguelin           #+#    #+#             */
-/*   Updated: 2024/03/21 15:35:04 by eguelin          ###   ########.fr       */
+/*   Updated: 2024/03/22 17:09:44 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int main( int argc, const char **argv )
 	try
 	{
 		vect = PmergeMe::strTabToContainer< std::vector<int> >(argv + 1);
-		deque = PmergeMe::strTabToContainer< std::deque<int> >(argv + 1);
 
 		std::cout << "Before:";
 		for (std::vector<int>::iterator it = vect.begin(); it != vect.end(); it++)
@@ -40,6 +39,7 @@ int main( int argc, const char **argv )
 		std::cout << std::endl;
 
 		startTime = clock();
+		vect = PmergeMe::strTabToContainer< std::vector<int> >(argv + 1);
 		PmergeMe::sortContainer< std::vector<int>, std::vector<std::pair<int, int> > >(vect);
 		endTime = clock();
 
@@ -54,6 +54,7 @@ int main( int argc, const char **argv )
 		std::cout << "us" << std::endl;
 
 		startTime = clock();
+		deque = PmergeMe::strTabToContainer< std::deque<int> >(argv + 1);
 		PmergeMe::sortContainer< std::deque<int>, std::deque<std::pair<int, int> > >(deque);
 		endTime = clock();
 
