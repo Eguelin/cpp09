@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 17:17:22 by eguelin           #+#    #+#             */
-/*   Updated: 2024/03/22 17:10:14 by eguelin          ###   ########.fr       */
+/*   Updated: 2024/03/26 17:10:36 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ class PmergeMe
 
 			while (*strTab)
 			{
+				if (**strTab == '\0')
+					throw (InvalidNumberException());
+
 				nb = std::strtod(*strTab, &endPtr);
 
 				if (nb > std::numeric_limits<int>::max() || *endPtr != '\0')
