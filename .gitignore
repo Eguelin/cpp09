@@ -1,9 +1,7 @@
-*.out*
-*.o
-*.d
-*.pdf
-*.txt
-.obj
-btc
-RPN
-PmergeMe
+*
+!.gitignore
+!*.cpp
+!*.hpp
+!*/
+!Makefile
+!data.csv
