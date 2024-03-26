@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:02:08 by eguelin           #+#    #+#             */
-/*   Updated: 2024/02/17 20:02:43 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/03/26 13:49:02 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,12 @@ class BitcoinExchange
 				virtual const char	*what( void ) const throw();
 			private:
 				std::string	_msg;
+		};
+
+		class BadInputException: public std::exception
+		{
+			public:
+				virtual const char	*what( void ) const throw();
 		};
 
 	private:

@@ -6,12 +6,13 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:02:07 by eguelin           #+#    #+#             */
-/*   Updated: 2024/02/17 20:29:09 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/03/26 13:52:38 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
+static void	trim( std::string &str );
 static bool	checkDate( const std::string &date );
 static int	convertDatePart( const char **str, const char sep, const int size );
 static bool	isValidDate( const int year, const int month, const int day );
@@ -55,23 +56,31 @@ void	BitcoinExchange::exchangeInputFile( const char *filename )
 {
 	std::ifstream			file;
 	std::string				line;
+	std::string 			trimedLine;
 
 	file.open(filename);
 	if (!file.is_open())
-		throw FileException("cannot open file" + std::string(filename));
+		throw FileException("cannot open file: " + std::string(filename));
 	else if (file.peek() == EOF)
 		throw FileException("empty file: " + std::string(filename));
 
 	while (std::getline(file, line))
 	{
-		if (line.empty() || line == "date | value")
+		trimedLine = line;
+		trim(trimedLine);
+
+		if (trimedLine.empty() || trimedLine == "date|value")
 			continue;
 
 		try
 		{
-			this->exchangeRequest(line);
+			this->exchangeRequest(trimedLine);
 		}
-		catch(const std::exception& e)
+		catch(const BadInputException& e)
+		{
+			std::cout << e.what() << line << std::endl;
+		}
+		catch(const InvalidInputException& e)
 		{
 			std::cout << "Error: " << e.what() << std::endl;
 		}
@@ -127,6 +136,10 @@ const char	*BitcoinExchange::InvalidInputException::what( void ) const throw()
 	return (this->_msg.c_str());
 }
 
+const char	*BitcoinExchange::BadInputException::what( void ) const throw()
+{
+	return ("bad input => ");
+}
 
 /* ************************************************************************** */
 /*                      Private constructor & destructor                      */
@@ -176,11 +189,11 @@ void	BitcoinExchange::_getData( const std::string &line, const std::string &sep,
 
 	pos = line.find(sep);
 	if (pos == std::string::npos || pos == 0 || pos == line.size() - 1)
-		throw InvalidInputException("bad input => " + line);
+		throw BadInputException();
 
 	date = line.substr(0, pos);
 	if (!checkDate(date))
-		throw InvalidInputException("bad input => " + line);
+		throw BadInputException();
 
 	nbr = this->_getNumber(line.substr(pos + sep.size()));
 }
@@ -192,7 +205,7 @@ double	BitcoinExchange::_getNumber( const std::string &str )
 
 	nbr = strtod(str.c_str(), &endptr);
 	if (*endptr != '\0')
-		throw InvalidInputException("bad input => " + str);
+		throw BadInputException();
 
 	return (nbr);
 }
@@ -218,6 +231,22 @@ double	BitcoinExchange::_getPrice( const std::string &date )
 /*                             Non-member functions                           */
 /* ************************************************************************** */
 
+static void	trim( std::string &str )
+{
+	if (str.empty())
+		return;
+
+	size_t firstIsSpace = str.find_first_of("\t\n\v\f\r ");
+	size_t firstNoSpace = str.find_first_not_of("\t\n\v\f\r ", firstIsSpace);
+
+	while (firstIsSpace != std::string::npos)
+	{
+		str.erase(firstIsSpace, firstNoSpace - firstIsSpace);
+		firstIsSpace = str.find_first_of("\t\n\v\f\r ");
+		firstNoSpace = str.find_first_not_of("\t\n\v\f\r ", firstIsSpace);
+	}
+}
+
 static bool	checkDate( const std::string &date )
 {
 	int			year;
@@ -226,7 +255,7 @@ static bool	checkDate( const std::string &date )
 	const char	*ptr = date.c_str();
 
 	if (date.size() != 10)
-		return (-1);
+		return (false);
 
 	year = convertDatePart(&ptr, '-', 4);
 	month = convertDatePart(&ptr, '-', 2);
