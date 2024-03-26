@@ -6,7 +6,7 @@
 /*   By: eguelin <eguelin@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/13 01:50:03 by eguelin           #+#    #+#             */
-/*   Updated: 2024/02/17 17:59:30 by eguelin          ###   ########lyon.fr   */
+/*   Updated: 2024/03/26 14:07:56 by eguelin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,30 @@ static bool	isOperator( char c );
 /*                           Public member functions                          */
 /* ************************************************************************** */
 
-int		RPN::calculate( const std::string &str )
+float	RPN::calculate( const std::string &str )
 {
+	std::stack<float , std::list<float> >	stack;
+
 	for (size_t i = 0; i < str.length(); i++)
 	{
 		if (str[i] == ' ')
 			continue ;
 		else if (str[i] == '-' && isdigit(str[i + 1]) && (str[i + 2] == ' ' || str[i + 2] == '\0'))
-			RPN::_stack.push(-1 * (str[++i] - '0'));
+			stack.push(-1 * (str[++i] - '0'));
 		else if (str[i + 1] != ' ' && str[i + 1] != '\0')
 			throw std::invalid_argument("Error");
 		else if (isOperator(str[i]))
-			RPN::_applyOperator(str[i]);
+			RPN::_applyOperator(str[i] , stack);
 		else if (isdigit(str[i]))
-			RPN::_stack.push(str[i] - '0');
+			stack.push(str[i] - '0');
 		else
 			throw std::invalid_argument("Error");
 	}
 
-	if (RPN::_stack.size() != 1)
+	if (stack.size() != 1)
 		throw std::invalid_argument("Error");
 
-	return (RPN::_stack.top());
+	return (stack.top());
 }
 
 /* ************************************************************************** */
@@ -74,34 +76,34 @@ RPN	&RPN::operator=( const RPN &src )
 /*                          Private member functions                          */
 /* ************************************************************************** */
 
-void	RPN::_applyOperator( char c )
+void	RPN::_applyOperator( char c , std::stack<float , std::list<float> > &stack )
 {
-	int		a;
-	int		b;
+	float	a;
+	float	b;
 
-	if (RPN::_stack.size() < 2)
+	if (stack.size() < 2)
 		throw std::invalid_argument("Error");
 
-	a = RPN::_stack.top();
-	RPN::_stack.pop();
-	b = RPN::_stack.top();
-	RPN::_stack.pop();
+	a = stack.top();
+	stack.pop();
+	b = stack.top();
+	stack.pop();
 
 	switch (c)
 	{
 		case '+':
-			RPN::_stack.push(b + a);
+			stack.push(b + a);
 			break;
 		case '-':
-			RPN::_stack.push(b - a);
+			stack.push(b - a);
 			break;
 		case '*':
-			RPN::_stack.push(b * a);
+			stack.push(b * a);
 			break;
 		case '/':
 			if (a == 0)
 				throw std::invalid_argument("Error");
-			RPN::_stack.push(b / a);
+			stack.push(b / a);
 			break;
 		default:
 			throw std::invalid_argument("Error");
@@ -116,9 +118,3 @@ static bool	isOperator( char c )
 {
 	return (c == '+' || c == '-' || c == '/' || c == '*');
 }
-
-/* ************************************************************************** */
-/*                      Static attributes initialization                      */
-/* ************************************************************************** */
-
-std::stack< int, std::list<int> >	RPN::_stack;
